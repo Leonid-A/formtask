@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import React, {FC, useState} from 'react';
+import React, {useState} from 'react';
 import './App.css';
 import Data from "./jsoncode/layout";
 import DetailsView from "./Components/DetailsView";
@@ -7,14 +7,13 @@ import NotesView from "./Components/NotesView";
 import ActivityView from "./Components/ActivityView";
 
 
+
 interface Tab {
     path: string;
     title: string;
     component: string;
     icon: string;
-    properties: {
-        sections:{}[]
-    };
+    properties: any;
 }
 
 function App() {
