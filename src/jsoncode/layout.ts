@@ -1,5 +1,5 @@
 
-  const Data={
+  const Lead={
     "classId": "Lead",
     "tabs": [
       {
@@ -336,4 +336,4 @@
     ]
   }
 
-  export default Data;
+  export default Lead;
