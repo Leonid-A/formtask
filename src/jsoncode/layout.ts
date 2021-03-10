@@ -1,5 +1,6 @@
+import {Page} from "../Types/TabsTypes";
 
-  const Lead={
+const Lead:Page={
     "classId": "Lead",
     "tabs": [
       {

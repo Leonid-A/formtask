@@ -39,3 +39,10 @@ export type Props = {
     icon: string;
     properties: SectProps;
 }
+
+export type Page = {
+    classId: string;
+    tabs: Props[];
+    dialog?: object;
+    widgets?: {}[];
+}
