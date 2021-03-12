@@ -1,9 +1,26 @@
-export type Condit = {
-    and: {
-            path: string;
-            operator: string;
-            value?: string | string[];
-        }[]
+export type Page = {
+    classId: string;
+    tabs: Props[];
+    dialog?: object;
+    widgets?: {}[];
+}
+
+export interface Props {
+    path: string;
+    title: string;
+    component: string;
+    icon: string;
+    properties: SectProps;
+}
+
+type SectProps = {
+    sections?: Sect[];
+}
+
+export type Sect = {
+    title: string;
+    editable: boolean;
+    selectedFields: Comp[];
 }
 
 export type Comp = {
@@ -13,36 +30,20 @@ export type Comp = {
     name: string;
     component: string;
     placeholder?: string;
-    conditions?: Condit;
+    conditions?: Condition;
     filters?: Filter;
+}
+
+export type Condition = {
+    and: {
+            path: string;
+            operator: string;
+            value?: string | string[];
+        }[]
 }
 
 export type Filter = {
     role: {
         in: string[];
     }
-}
-
-export type Sect = {
-    title: string;
-    editable: boolean;
-    selectedFields: Comp[];
-}
-
-type SectProps = {
-    sections?: Sect[];
-}
-export type Props = {
-    path: string;
-    title: string;
-    component: string;
-    icon: string;
-    properties: SectProps;
-}
-
-export type Page = {
-    classId: string;
-    tabs: Props[];
-    dialog?: object;
-    widgets?: {}[];
 }

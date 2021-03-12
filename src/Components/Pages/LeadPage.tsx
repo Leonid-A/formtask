@@ -1,15 +1,10 @@
 import Lead from "../../jsoncode/layout";
 import React, {useState} from "react";
-import {Link} from "react-router-dom";
 import {Page, Props} from "../../Types/TabsTypes";
-import Classes from "../../jsoncode/classes";
-import DetailsView from "../DetailsView";
-import NotesView from "../NotesView";
-import ActivityView from "../ActivityView";
-
+import Tab from "../Tab";
 
 const LeadPage = () => {
-    const [leadObj, setLeadObj]=useState<Page>(Lead);
+    const [leadObj, setLeadObj] = useState<Page>(Lead);
     let newTabName = "";
     const [Component, setComponent]=useState<JSX.Element>();
 
@@ -32,11 +27,12 @@ const LeadPage = () => {
         }
     }
 
-    const editCurrentTab = (tab)=> {
+    const editCurrentTab = (tab, index)=> {
         if (!Component){
-            switch (tab.component) {
+            setComponent(<Tab key={tab.title + index} {...tab}/>)
+            /*switch (tab.component) {
                 case "DetailsView":
-                    setComponent(<DetailsView key={tab.title} {...tab}/>)
+                    setComponent()
                     break;
                 case "NotesView":
                     setComponent(<NotesView key={tab.title} {...tab}/>)
@@ -46,9 +42,8 @@ const LeadPage = () => {
                     break;
                 default:
                     setComponent(<p>Something went wrong</p>)
-            }
+            }*/
         }
-
     }
 
     return (
@@ -63,16 +58,20 @@ const LeadPage = () => {
                     <option>select tab</option>
                     <option>test</option>
                     <option>other</option>
-
                 </select>
-                <button className="btn btn-sm btn-primary m-2" type="button" onClick={addNewTab}>Add</button>
+                <button className="btn btn-sm btn-primary m-2"
+                        type="button"
+                        onClick={addNewTab}
+                >
+                    Add
+                </button>
                 <table className="m-3 border">
                     <thead>
-                    <tr>
-                        <th className="border p-1 m-2 text-center">Title</th>
-                        <th className="border p-1 m-2 text-center">Delete</th>
-                        <th className="border p-1 m-2 text-center">Edit</th>
-                    </tr>
+                        <tr>
+                            <th className="border p-1 m-2 text-center">Title</th>
+                            <th className="border p-1 m-2 text-center">Delete</th>
+                            <th className="border p-1 m-2 text-center">Edit</th>
+                        </tr>
                     </thead>
                     <tbody>
                     {leadObj.tabs.map((tab:Props, index:number)=> {
@@ -92,7 +91,7 @@ const LeadPage = () => {
                                 <td className="border p-1">
                                     <button className="btn btn-sm btn-primary m-2"
                                             type="button"
-                                            onClick={ () => editCurrentTab(tab) }
+                                            onClick={ () => editCurrentTab(tab, index) }
                                     >
                                         Edit
                                     </button>
@@ -108,91 +107,4 @@ const LeadPage = () => {
     )
 }
 
-
 export default LeadPage;
-
-/*
-<div className='row'>
-    <table className="m-3 border">
-        <thead>
-        <tr>
-            <th className="border p-1 m-2 text-center">Properties</th>
-            <th className="border p-1 m-2 text-center">Values</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td className="border p-1">
-                <p>Path</p>
-            </td>
-            <td className="border p-1">
-                <input type="text" id={`tab_path_${index}`} name="path"  defaultValue={tab.path}/>
-            </td>
-        </tr>
-        <tr>
-            <td className="border p-1">
-                <p>Title</p>
-            </td>
-            <td className="border p-1">
-                <input type="text" id={`tab_title_${index}`} name="title"  defaultValue={tab.title}/>
-            </td>
-        </tr>
-        <tr>
-            <td className="border p-1">
-                <p>Icon</p>
-            </td>
-            <td className="border p-1">
-                <input type="text" id={`tab_icon_${index}`} name="icon"  defaultValue={tab.icon}/>
-            </td>
-        </tr>
-        <tr>
-            <td className="border p-1">
-                <p>Component</p>
-            </td>
-            <td className="border p-1">
-                <select id={`tab_component_${index}`} name="component"  defaultValue={tab.component}>
-                    <option value="DetailsView">DetailsView</option>
-                    <option value="NotesView">NotesView</option>
-                    <option value="ActivityView">ActivityView</option>
-                </select>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <div className='container text-left'>
-        <h4>Properties</h4>
-        <div className="row m-0">
-            <h5>Section</h5>
-        </div>
-    </div>
-</div>*/
-
-
-{/* <h1>{Data.classId}</h1>
-      <div>
-          {Data.tabs.map((tab: Props) => {                  // drawing buttons for tabs
-              return <button className="btn btn-primary m-2"
-                             key={tab.title}
-                             type="button"
-                             onClick={()=> addNewTab(tab)}>
-                        {tab.title}
-                    </button>
-          })}
-          {components.map((tab: Props) =>{                          // drawing clicked tabs
-              let Component: JSX.Element;
-                  switch (tab.component) {
-                      case "DetailsView":
-                          Component= <DetailsView key={tab.title} {...tab}/>
-                          break;
-                      case "NotesView":
-                          Component= <NotesView key={tab.title} {...tab}/>
-                          break;
-                      case "ActivityView":
-                          Component= <ActivityView key={tab.title} {...tab} />
-                          break;
-                      default:
-                          Component= <p>Something went wrong</p>
-                  };
-              return Component;
-          })}
-      </div>*/}

@@ -1,11 +1,12 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.js';
 import React from 'react';
-import './App.css';
+import './Styles/App.css';
 import { BrowserRouter, Route, Switch} from "react-router-dom";
 import CreatEditPage from "./Components/Pages/CreatEditPage"
 import LeadPage from "./Components/Pages/LeadPage"
 import QueryBuilderPage from "./Components/Pages/QueryBuilderPage";
+
 
 function App() {
   return (
