@@ -1,40 +1,26 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {Props} from "../Types/TabsTypes";
 import {Field, Form} from "react-final-form";
-import Styles from "../Styles/Styles";
-import { FieldArray } from 'react-final-form-arrays'
-import arrayMutators from 'final-form-arrays'
-
+import { FieldArray } from 'react-final-form-arrays';
+import arrayMutators from 'final-form-arrays';
+import styles from '../Styles/Tab.module.css';
+import Box from '@material-ui/core/Box';
+import Card from '@material-ui/core/Card';
+import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 
 const Tab: React.FC<Props> = (props) => {
    // const [tabConfig, setTabConfig] = useState<Props>({...props});
-    /*  const [renderConfigs,setRenderConfigs]=useState([]);
-      useEffect(() => {
-          let newRenderConfigs=[];
-          for (let key in tabConfig){
-              newRenderConfigs.push([key, tabConfig[key]]);
-          }
-          setRenderConfigs(newRenderConfigs)
-      }, [tabConfig])
-
-      const saveChanges = ()=> {
-
-      }
-
-      const takeChanges =(event, key) => {
-        // takeTabChanges[key] = event.target.value;
-      }*/
-
     const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
     const onSubmit = async values => {
         await sleep(300)
-        //window.alert(JSON.stringify(values))
         console.log(values)
     }
 
     return(
-       <>
+       <Box className={styles.tab}>
             <h1>{props.title} Tab</h1>
             <Form
                 onSubmit={onSubmit}
@@ -47,237 +33,217 @@ const Tab: React.FC<Props> = (props) => {
                            form: { mutators: { push, pop }},
                            submitting,
                            pristine,
-                           values
+                         //  values
                 }) => (
-                    <form onSubmit={handleSubmit}>
-                        <div>
-                            <label>Path</label>
-                            <Field
-                                name="path"
-                                component="input"
-                                type="text"
-                            />
-                        </div>
-                        <div>
-                            <label>Title</label>
-                            <Field
-                                name="title"
-                                component="input"
-                                type="text"
-                            />
-                        </div>
-                        <div>
-                            <label>Icon</label>
-                            <Field
-                                name="icon"
-                                component="input"
-                                type="text"
-                            />
-                        </div>
-                        <div>
-                            <label>Component</label>
-                            <Field name="component" component="select">
-                                <option value=""> </option>
-                                <option value="DetailsView">DetailsView</option>
-                                <option value="NotesView">NotesView</option>
-                                <option value="ActivityView">ActivityView</option>
-                            </Field>
-                        </div>
-                        <h3>Properties</h3>
-                        <p>Sections</p>
-                        <div className="buttons">
-                            <button
-                                type="button"
-                                onClick={() => push('properties.sections', undefined)}
-                            >
-                                Add Section
-                            </button>
-                            <button type="button" onClick={() => pop('properties.sections')}>
-                                Remove Section
-                            </button>
-                        </div>
-                        <FieldArray name="properties.sections">
-                            {({ fields }) =>
-                                fields.map((section, sectIndex) => (
-                                    <div key={section}>
-                                        <div>
-                                            <span
-                                                onClick={() => fields.remove(sectIndex)}
-                                                style={{ cursor: 'pointer' }}
-                                            >
-                                                ❌
-                                            </span>
-                                        </div>
-                                        <div>
-                                            <label>Title</label>
-                                            <Field
-                                                name={`${section}.title`}
-                                                component="input"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label>Editable</label>
-                                            <Field
-                                                name={`${section}.editable`}
-                                                component="input"
-                                                type="checkbox"
-                                        />
-                                        </div>
-
-                                        <div className="buttons">
-                                            <button
-                                                type="button"
-                                                onClick={() => push(`${section}.selectedFields`, undefined)}
-                                            >
-                                                Add Field
-                                            </button>
-                                            <button type="button" onClick={() => pop(`${section}.selectedFields`)}>
-                                                Remove Field
-                                            </button>
-                                        </div>
-                                        <FieldArray name={`${section}.selectedFields`}>
-                                            {({ fields }) =>
-                                                fields.map((field, index) => (
-                                                    <div key={field}>
-                                                        <div>
-                                                            <span
-                                                                onClick={() => fields.remove(index)}
-                                                                style={{ cursor: 'pointer' }}
-                                                            >
-                                                                ❌
-                                                            </span>
-                                                        </div>
-                                                        <div>
-                                                            <label>Label</label>
-                                                            <Field
-                                                                name={`${field}.label`}
-                                                                component="input"
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <label>Read</label>
-                                                            <Field
-                                                                name={`${field}.read`}
-                                                                component="input"
-                                                                type="checkbox"
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <label>Write</label>
-                                                            <Field
-                                                                name={`${field}.write`}
-                                                                component="input"
-                                                                type="checkbox"
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <label>Name</label>
-                                                            <Field
-                                                                name={`${field}.name`}
-                                                                component="input"
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <label>Component</label>
-                                                            <Field name={`${field}.component`} component="select">
-                                                                <option value=""> </option>
-                                                                <option value="PointerField">PointerField</option>
-                                                                <option value="TextField">TextField</option>
-                                                                <option value="CurrencyField">CurrencyField</option>
-                                                                <option value="ChoiceField">ChoiceField</option>
-                                                                <option value="SwitchField">SwitchField</option>
-                                                            </Field>
-                                                        </div>
-
-
-                                                     {/*   <div>
-                                                            <label>Placeholder</label>
-                                                            <Field
-                                                                name={`${field}.placeholder`}
-                                                                component="input"
-                                                            />
-                                                        </div>*/}
-                                                    </div>
-                                                ))
-                                            }
-                                        </FieldArray>
-                                    </div>
-                                ))
-                            }
-                        </FieldArray>
-
-                        <div className="buttons">
-                            <button type="submit" disabled={submitting || pristine}>
-                                Submit
-                            </button>
-                            <button
-                                type="button"
-                                onClick={form.reset}
-                                disabled={submitting || pristine}
-                            >
-                                Reset
-                            </button>
-                        </div>
-                        {/*<pre>{JSON.stringify(values}</pre>*/}
-                    </form>
+                    <Card variant="outlined" className={styles.form}>
+                        <form onSubmit={handleSubmit}>
+                            <Grid container spacing={3}>
+                                <Grid item xs={2}>
+                                    <label >Path</label>
+                                </Grid>
+                                <Grid item xs={3}>
+                                    <Field
+                                        name="path"
+                                        component="input"
+                                        type="text"
+                                    />
+                                </Grid>
+                            </Grid>
+                            <Grid container spacing={3}>
+                                <Grid item xs={2}>
+                                    <label className={styles.label}>Title</label>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <Field
+                                        name="title"
+                                        component="input"
+                                        type="text"
+                                    />
+                                </Grid>
+                            </Grid>
+                            <Grid container spacing={3}>
+                                <Grid item xs={2}>
+                                    <label className={styles.label}>Icon</label>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <Field
+                                        name="icon"
+                                        component="input"
+                                        type="text"
+                                    />
+                                </Grid>
+                            </Grid>
+                            <Grid container spacing={3}>
+                                <Grid item xs={2}>
+                                    <label className={styles.label}>Component</label>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <Field name="component" component="select">
+                                        <option value=""> </option>
+                                        <option value="DetailsView">DetailsView</option>
+                                        <option value="NotesView">NotesView</option>
+                                        <option value="ActivityView">ActivityView</option>
+                                    </Field>
+                                </Grid>
+                            </Grid>
+                            <h3>Properties</h3>
+                            <p>Sections</p>
+                            <Grid container className={styles.buttonBlock}>
+                                <Button variant="outlined" color="secondary"
+                                    onClick={() => push('properties.sections', undefined)}
+                                >
+                                    Add Section
+                                </Button>
+                            </Grid>
+                            <FieldArray name="properties.sections">
+                                {({ fields }) =>
+                                    fields.map((section, sectIndex) => (
+                                        <Card key={section} variant="outlined" className={styles.form}>
+                                            <Grid container>
+                                                    <span
+                                                        onClick={() => fields.remove(sectIndex)}
+                                                        style={{ cursor: 'pointer' }}
+                                                    >
+                                                        ❌
+                                                    </span>
+                                                </Grid>
+                                            <Grid container spacing={3}>
+                                                <Grid item xs={2}>
+                                                    <label className={styles.label}>Title</label>
+                                                </Grid>
+                                                <Grid item xs={5}>
+                                                    <Field
+                                                        name={`${section}.title`}
+                                                        component="input"
+                                                    />
+                                                </Grid>
+                                            </Grid>
+                                            <Grid container spacing={3}>
+                                                <Grid item xs={2}>
+                                                    <label className={styles.label}>Editable</label>
+                                                </Grid>
+                                                <Grid item xs={5}>
+                                                    <Field
+                                                        name={`${section}.editable`}
+                                                        component="input"
+                                                        type="checkbox"
+                                                    />
+                                                </Grid>
+                                            </Grid>
+                                            <Grid container className={styles.buttonBlock}>
+                                                <Button variant="outlined" color="secondary"
+                                                    onClick={() => push(`${section}.selectedFields`, undefined)}
+                                                >
+                                                    Add Field
+                                                </Button>
+                                            </Grid>
+                                            <FieldArray name={`${section}.selectedFields`}>
+                                                {({ fields }) =>
+                                                    fields.map((field, index) => (
+                                                        <Card key={field} className={`${styles.form} + ${styles.field}`}>
+                                                            <Grid container>
+                                                                <span
+                                                                    onClick={() => fields.remove(index)}
+                                                                    style={{ cursor: 'pointer' }}
+                                                                >
+                                                                    ❌
+                                                                </span>
+                                                            </Grid>
+                                                            <Grid container spacing={3}>
+                                                                <Grid item xs={2}>
+                                                                    <label className={styles.label}>Label</label>
+                                                                </Grid>
+                                                                <Grid item xs={5}>
+                                                                    <Field
+                                                                        name={`${field}.label`}
+                                                                        component="input"
+                                                                    />
+                                                                </Grid>
+                                                            </Grid>
+                                                            <Grid container spacing={3}>
+                                                                <Grid item xs={2}>
+                                                                    <label className={styles.label}>Read</label>
+                                                                </Grid>
+                                                                <Grid item xs={5}>
+                                                                    <Field
+                                                                        name={`${field}.read`}
+                                                                        component="input"
+                                                                        type="checkbox"
+                                                                    />
+                                                                </Grid>
+                                                            </Grid>
+                                                            <Grid container spacing={3}>
+                                                                <Grid item xs={2}>
+                                                                    <label className={styles.label}>Write</label>
+                                                                </Grid>
+                                                                <Grid item xs={5}>
+                                                                    <Field
+                                                                        name={`${field}.write`}
+                                                                        component="input"
+                                                                        type="checkbox"
+                                                                    />
+                                                                </Grid>
+                                                            </Grid>
+                                                            <Grid container spacing={3}>
+                                                                <Grid item xs={2}>
+                                                                    <label className={styles.label}>Name</label>
+                                                                </Grid>
+                                                                <Grid item xs={5}>
+                                                                    <Field
+                                                                        name={`${field}.name`}
+                                                                        component="input"
+                                                                    />
+                                                                </Grid>
+                                                            </Grid>
+                                                            <Grid container spacing={3}>
+                                                                <Grid item xs={2}>
+                                                                    <label className={styles.label}>Component</label>
+                                                                </Grid>
+                                                                <Grid item xs={5}>
+                                                                    <Field name={`${field}.component`} component="select">
+                                                                        <option value=""> </option>
+                                                                        <option value="PointerField">PointerField</option>
+                                                                        <option value="TextField">TextField</option>
+                                                                        <option value="CurrencyField">CurrencyField</option>
+                                                                        <option value="ChoiceField">ChoiceField</option>
+                                                                        <option value="SwitchField">SwitchField</option>
+                                                                    </Field>
+                                                                </Grid>
+                                                            </Grid>
+                                                            <Grid container spacing={3}>
+                                                                <Grid item xs={2}>
+                                                                    <label className={styles.label}>Placeholder</label>
+                                                                </Grid>
+                                                                <Grid item xs={5}>
+                                                                    <Field
+                                                                        name={`${field}.placeholder`}
+                                                                        component="input"
+                                                                    />
+                                                                </Grid>
+                                                            </Grid>
+                                                        </Card>
+                                                    ))
+                                                }
+                                            </FieldArray>
+                                        </Card>
+                                    ))
+                                }
+                            </FieldArray>
+                            <Grid container className={styles.btnGroup} >
+                                <ButtonGroup  variant="contained" color="primary" aria-label="contained primary button group">
+                                    <Button type="submit" disabled={submitting || pristine}>
+                                        Submit
+                                    </Button>
+                                    <Button onClick={form.reset} disabled={submitting || pristine}>
+                                        Reset
+                                    </Button>
+                                </ButtonGroup>
+                            </Grid>
+                        </form>
+                    </Card>
                 )}
             />
-       </>
-        /*<div className="p-3 mb-2 bg-secondary text-white border-dark rounded">
-            <div className="row">
-                <div className="col-8">
-                    { renderConfigs.map((item)=>{
-                        let renderedItem: JSX.Element;
-                        switch (item[0]) {
-                            case "component":
-                                renderedItem =  <div className="row" key={item[0]}>
-                                    <div className="col-2">
-                                        <label htmlFor={item[0]} className="mr-2">{item[0]}</label>
-                                    </div>
-                                    <div className="col-4">
-                                        <select name={item[0]}
-                                                defaultValue={item[1]}
-                                                onChange={(event) => takeChanges(event, item[0])}
-                                        >
-                                            <option value="DetailsView">DetailsView</option>
-                                            <option value="NotesView">NotesView</option>
-                                            <option value="ActivityView">ActivityView</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                break;
-                            case "properties":
-                                renderedItem =  <div className="row" key={item[0]}>
-
-                                                </div>
-                                break;
-                            default:
-                                renderedItem = <div className="row" key={item[0]}>
-                                    <div className="col-2">
-                                        <label htmlFor={item[0]} className="mr-2">{item[0]}</label>
-                                    </div>
-                                    <div className="col-4">
-                                        <input type="text"
-                                               name={item[0]}
-                                               defaultValue={item[1]}
-                                               onChange={(event) => takeChanges(event, item[0] )}
-                                        />
-                                    </div>
-                                </div>
-                        }
-                        return renderedItem
-                    })}
-                </div>
-                <div className="col-2">
-                    <button className="btn btn-sm btn-primary m-2"
-                            type="button"
-                            onClick={saveChanges}
-                    >
-                        Save Changes
-                    </button>
-                </div>
-            </div>
-        </div>*/
+       </Box>
     )
 }
 

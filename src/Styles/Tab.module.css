@@ -1,0 +1,25 @@
+.tab {
+    text-align:center;
+}
+
+.form {
+    text-align:left;
+    margin: 10px auto;
+    padding: 20px;
+}
+
+.label{
+    margin-right: 10px;
+}
+
+.buttonBlock {
+    margin:0;
+}
+
+.field{
+    background-color: #EEEEEE
+}
+
+.btnGroup {
+    margin-top: 10px;
+}

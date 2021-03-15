@@ -2,14 +2,30 @@ import Lead from "../../jsoncode/layout";
 import React, {useState} from "react";
 import {Page, Props} from "../../Types/TabsTypes";
 import Tab from "../Tab";
+import Container from "@material-ui/core/Container";
+import styles from '../../Styles/Page.module.css';
+import TextField from "@material-ui/core/TextField";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormControl from "@material-ui/core/FormControl";
+import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
+import Paper from "@material-ui/core/Paper";
+import Table from "@material-ui/core/Table";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import TableCell from "@material-ui/core/TableCell";
+import TableBody from "@material-ui/core/TableBody";
+import TableContainer from "@material-ui/core/TableContainer";
 
 const LeadPage = () => {
     const [leadObj, setLeadObj] = useState<Page>(Lead);
     let newTabName = "";
     const [Component, setComponent]=useState<JSX.Element>();
 
-    const takeTabName = (event: React.ChangeEvent<HTMLSelectElement>)=> {
-        newTabName = (event.target.value === "select tab") ? "" : event.target.value
+    const takeTabName = (event: React.ChangeEvent<{ value: unknown }>)=> {
+        newTabName = (event.target.value === "select tab") ? "" : event.target.value as string
     }
 
     const deleteTab = (index)=>{
@@ -30,80 +46,89 @@ const LeadPage = () => {
     const editCurrentTab = (tab, index)=> {
         if (!Component){
             setComponent(<Tab key={tab.title + index} {...tab}/>)
-            /*switch (tab.component) {
-                case "DetailsView":
-                    setComponent()
-                    break;
-                case "NotesView":
-                    setComponent(<NotesView key={tab.title} {...tab}/>)
-                    break;
-                case "ActivityView":
-                    setComponent(<ActivityView key={tab.title} {...tab} />)
-                    break;
-                default:
-                    setComponent(<p>Something went wrong</p>)
-            }*/
         }
     }
 
+    const useStyles = makeStyles((theme: Theme) =>
+        createStyles({
+            formControl: {
+                margin: theme.spacing(0),
+                minWidth: 150,
+            }
+        }),
+    );
+
+    const classes = useStyles();
+
     return (
-        <div className="container-fluid mt-3">
-            <header className='bg-info p-1'>
-                <label htmlFor="classId" className="mr-2">Path</label>
-                <input type="text" id='classId' name="classId"  defaultValue={leadObj.classId}/>
-            </header>
-            <section className='bg-warning p-1'>
-                <h3>Tabs</h3>
-                <select className="form-select" aria-label="Default select example" onChange={takeTabName}>
-                    <option>select tab</option>
-                    <option>test</option>
-                    <option>other</option>
-                </select>
-                <button className="btn btn-sm btn-primary m-2"
-                        type="button"
-                        onClick={addNewTab}
-                >
-                    Add
-                </button>
-                <table className="m-3 border">
-                    <thead>
-                        <tr>
-                            <th className="border p-1 m-2 text-center">Title</th>
-                            <th className="border p-1 m-2 text-center">Delete</th>
-                            <th className="border p-1 m-2 text-center">Edit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {leadObj.tabs.map((tab:Props, index:number)=> {
-                        return(
-                            <tr key={tab.title}>
-                                <td className="border p-1">
-                                    <h3>{tab.title}</h3>
-                                </td>
-                                <td className="border p-1">
-                                    <button className="btn btn-sm btn-danger m-2"
-                                            type="button"
-                                            onClick={()=>deleteTab(index)}
-                                    >
-                                        Delete
-                                    </button>
-                                </td>
-                                <td className="border p-1">
-                                    <button className="btn btn-sm btn-primary m-2"
-                                            type="button"
-                                            onClick={ () => editCurrentTab(tab, index) }
-                                    >
-                                        Edit
-                                    </button>
-                                </td>
-                            </tr>
-                        )
-                    })}
-                    </tbody>
-                </table>
+
+        <Container className={styles.page}>
+            <TextField
+                id="classId"
+                label="Path"
+                style={{ margin: 8 }}
+                margin="normal"
+                InputLabelProps={{
+                    shrink: true,
+                }}
+                defaultValue={leadObj.classId}
+            />
+
+            <div>
+                <h2>Tabs</h2>
+                    <FormControl className={classes.formControl}>
+                        <InputLabel id="new-tab-label">Add New Tab</InputLabel>
+                        <Select
+                            labelId="new-tab-label"
+                            id="new-tab"
+                            value={""}
+                            onChange={takeTabName}
+                        >
+                            <MenuItem value={"test"}>test</MenuItem>
+                            <MenuItem value={"other"} >other</MenuItem>
+
+                        </Select>
+                    </FormControl>
+
+                    <Button  variant="contained" color="primary" onClick={addNewTab}>
+                        Add
+                    </Button>
+
+                <TableContainer component={Paper} className={styles.table}>
+                    <Table  size="small" aria-label="a dense table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell align="center">Title</TableCell>
+                                <TableCell align="center">Delete</TableCell>
+                                <TableCell align="center">Edit</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {leadObj.tabs.map((tab:Props, index:number)=> {
+                                return(
+                                    <TableRow key={tab.title}>
+                                        <TableCell align="center">
+                                            <h3>{tab.title}</h3>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Button variant="contained" color="secondary" onClick={()=> deleteTab(index)}>
+                                                Delete
+                                            </Button>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Button variant="contained" color="primary" onClick={()=> editCurrentTab(tab, index)}>
+                                                Edit
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
                 {Component}
-            </section>
-        </div>
+            </div>
+        </Container>
     )
 }
 

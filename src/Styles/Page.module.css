@@ -1,0 +1,15 @@
+.page{
+    margin: 15px 10px 0;
+}
+
+.card{
+    padding: 5px;
+}
+
+
+.table {
+    border: 1px;
+    margin-top: 10px;
+    max-width: 400px;
+}
+
