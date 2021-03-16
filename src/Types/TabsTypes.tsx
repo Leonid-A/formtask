@@ -11,6 +11,7 @@ export interface Props {
     component: string;
     icon: string;
     properties: SectProps;
+    click?: (value: Props | null) => void;
 }
 
 type SectProps = {
@@ -35,11 +36,12 @@ export type Comp = {
 }
 
 export type Condition = {
-    and: {
+    and?: {
             path: string;
             operator: string;
             value?: string | string[];
         }[]
+    or?: {}[]
 }
 
 export type Filter = {

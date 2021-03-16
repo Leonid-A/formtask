@@ -1,39 +1,27 @@
 import React from 'react';
-import {Props} from "../Types/TabsTypes";
+import {Props, Comp} from "../Types/TabsTypes";
 import {Field, Form} from "react-final-form";
 import { FieldArray } from 'react-final-form-arrays';
 import arrayMutators from 'final-form-arrays';
 import styles from '../Styles/Tab.module.css';
-import Box from '@material-ui/core/Box';
-import Card from '@material-ui/core/Card';
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
-import ButtonGroup from '@material-ui/core/ButtonGroup';
+import {Box, Card, Grid, Button, ButtonGroup} from '@material-ui/core';
+import Conditions from "./Conditions"
 
 const Tab: React.FC<Props> = (props) => {
-   // const [tabConfig, setTabConfig] = useState<Props>({...props});
-    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
-
-    const onSubmit = async values => {
-        await sleep(300)
-        console.log(values)
-    }
 
     return(
        <Box className={styles.tab}>
             <h1>{props.title} Tab</h1>
             <Form
-                onSubmit={onSubmit}
+                onSubmit={props.click}
                 mutators={{
                 ...arrayMutators
                 }}
                 initialValues={props}
                 render={({ handleSubmit,
-                           form,
                            form: { mutators: { push, pop }},
                            submitting,
                            pristine,
-                         //  values
                 }) => (
                     <Card variant="outlined" className={styles.form}>
                         <form onSubmit={handleSubmit}>
@@ -221,6 +209,11 @@ const Tab: React.FC<Props> = (props) => {
                                                                     />
                                                                 </Grid>
                                                             </Grid>
+                                                            {/*{props.properties.sections[sectIndex].selectedFields[index].conditions
+                                                                ? <Conditions {...props.properties.sections[sectIndex].selectedFields[index].conditions}/>
+                                                                : null}
+
+                                                            */}
                                                         </Card>
                                                     ))
                                                 }
@@ -234,8 +227,8 @@ const Tab: React.FC<Props> = (props) => {
                                     <Button type="submit" disabled={submitting || pristine}>
                                         Submit
                                     </Button>
-                                    <Button onClick={form.reset} disabled={submitting || pristine}>
-                                        Reset
+                                    <Button onClick={() => props.click(null)} >
+                                        Close
                                     </Button>
                                 </ButtonGroup>
                             </Grid>

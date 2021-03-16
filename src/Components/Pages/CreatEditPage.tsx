@@ -1,41 +1,81 @@
 import Classes from "../../jsoncode/classes";
-import React, {useState} from "react";
-import Lead from "../../jsoncode/layout";
-import {Page} from "../../Types/TabsTypes"
-import {Container} from "@material-ui/core";
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
+import React, {useEffect, useState} from "react";
+import {Page} from "../../Types/TabsTypes";
+import styles from '../../Styles/CreatePage.module.css';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import Button from "@material-ui/core/Button";
-import styles from '../../Styles/CreatePage.module.css'
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import {
+    Paper,
+    TableRow,
+    TableHead,
+    TableContainer,
+    TableCell,
+    TableBody,
+    Table,
+    Button,
+    Select,
+    FormControl,
+    MenuItem,
+    InputLabel,
+    Container
+} from '@material-ui/core';
 
 const CreatEditPage = () => {
-    const [pages, setPages]=useState([Lead])
-    let newPageName: string;
+    const [pages, setPages]=useState([]);
+    const [renderClasses, setRenderClasses]=useState([])
+    const [newPageName, setNewPageName]=useState("");
 
-    const takePageName = (event: React.ChangeEvent<{ value: unknown }>) => {
-        newPageName = (event.target.value === "select page") ? "" : event.target.value as string ;
+    const getData=()=>{
+        fetch('data.json'
+            ,{
+                headers : {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }
+        )
+            .then(function(response){
+                return response.json();
+            })
+            .then(function(myJson) {
+                setPages(myJson)
+            });
     }
 
-    const addNewPage = () => {
+    const setClasses=() => {
+        let classesArray=[];
+        Classes.map((obj) =>{
+            if (obj.isDocument && !obj.isSystem) {
+                pages.map((page)=>{
+                    if (page.classId !== obj.name){
+                        classesArray.push(obj.name)
+                    }
+                })
+            }
+        })
+        setRenderClasses(classesArray)
+    }
+
+    useEffect(()=>{
+        getData()
+        setClasses()
+
+    },[])
+
+
+    const takePageName = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setNewPageName(event.target.value as string) ;
+    }
+
+/*    const addNewPage = () => {
         if (newPageName){
             const pagesArray = JSON.parse(JSON.stringify(pages));
             pagesArray.push({classId:newPageName});
             setPages(pagesArray);
-            newPageName= "";
+            setNewPageName("");
         }
-    }
+    }*/
 
-    const deletePage = (id)=>{
+/*    const deletePage = (id)=>{
         const pagesArray = JSON.parse(JSON.stringify(pages));
         pagesArray.map((page,index)=>{
             if (page.classId === id){
@@ -43,7 +83,7 @@ const CreatEditPage = () => {
             }
         })
         setPages(pagesArray);
-    }
+    }*/
 
     const useStyles = makeStyles((theme: Theme) =>
         createStyles({
@@ -64,19 +104,14 @@ const CreatEditPage = () => {
                 <Select
                     labelId="create-page-label"
                     id="create-page"
-                    value={""}
                     onChange={takePageName}
-
                 >
-                    {Classes.map((obj) =>{
-                        if (obj.isDocument && !obj.isSystem) {
-                            return <MenuItem key={obj.name} value={obj.name} >{obj.name}</MenuItem>
-                        }
+                    {renderClasses.map((name) =>{
+                            return <MenuItem key={name} value={name} >{name}</MenuItem>
                     })}
                 </Select>
             </FormControl>
-            <Button variant="contained" color="primary" onClick={addNewPage}>Add</Button>
-
+            {/*<Button variant="contained" color="primary" onClick={addNewPage}>+</Button>
             <TableContainer component={Paper} className={styles.table}>
                 <Table  size="small" aria-label="a dense table">
                     <TableHead>
@@ -91,12 +126,12 @@ const CreatEditPage = () => {
                             return(
                                 <TableRow key={page.classId}>
                                     <TableCell align="center">
-                                        {page.classId}
+                                        <h3>{page.classId}</h3>
                                     </TableCell>
                                     <TableCell align="center">
                                         <Button variant="contained" color="secondary" onClick={()=> deletePage(page.classId)}>
-                                        Delete
-                                    </Button>
+                                        X
+                                        </Button>
                                     </TableCell>
                                     <TableCell align="center">
                                         <Button variant="contained" color="primary" href={`/${page.classId}`}>
@@ -108,7 +143,7 @@ const CreatEditPage = () => {
                         })}
                     </TableBody>
                 </Table>
-            </TableContainer>
+            </TableContainer>*/}
         </Container>
     )
 }
