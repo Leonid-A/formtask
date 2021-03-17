@@ -1,5 +1,7 @@
 const Section = () => {
-    return
+    return(
+        <></>
+    )
 }
 
 export default Section;

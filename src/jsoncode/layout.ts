@@ -1,6 +1,6 @@
-import {Page} from "../Types/TabsTypes";
+import {PageType} from "../Types/TabsTypes";
 
-const Lead:Page={
+const Lead:PageType={
     "classId": "Lead",
     "tabs": [
       {

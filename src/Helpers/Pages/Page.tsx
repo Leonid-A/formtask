@@ -1,7 +1,9 @@
 import Lead from "../../jsoncode/layout";
 import React, {useState} from "react";
-import {Page, Props} from "../../Types/TabsTypes";
-import Tab from "../Tab";
+import {PageType, Props} from "../../Types/TabsTypes";
+import DetailsView from "../Components/DetailsView/DetailsView";
+import ActivityView from "../Components/ActivityView/ActivityView";
+import NotesView from "../Components/NotesView/NotesView";
 import styles from '../../Styles/Page.module.css';
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {
@@ -20,18 +22,14 @@ import {
     Paper,
     Button,
     MenuItem,
-    FormControl
+    FormControl, ButtonGroup
 } from "@material-ui/core";
+import arrayMutators from "final-form-arrays";
+import {Field, Form} from "react-final-form";
 
-const LeadPage = () => {
-    const [leadObj, setLeadObj] = useState<Page>(Lead);
-    const [newTabName, setNewTabName] =useState("");
+const Page = () => {
+    const [leadObj, setLeadObj] = useState<PageType>(Lead);
     const [Component, setComponent]=useState<JSX.Element>(null);
-
-    const takeTabName = (event: React.ChangeEvent<{ value: unknown }>)=> {
-        const tabName = (event.target.value === "select tab") ? "" : event.target.value as string
-        setNewTabName(tabName)
-    }
 
     const setPathName = (event: React.ChangeEvent<HTMLInputElement>)=> {
         setLeadObj({...leadObj, classId: event.target.value})
@@ -43,35 +41,56 @@ const LeadPage = () => {
         setLeadObj(editLeadObj);
     }
 
-    const addNewTab=()=>{
-        if (newTabName && !Component){
+    const submit= (values)=>{
+        if(values.title && values.tabComponent && !Component) {
             const editLeadObj = JSON.parse(JSON.stringify(leadObj));
             const index = leadObj.tabs.length
             const tab = {
-                title: newTabName,
+                title: values.title,
                 path: "",
                 icon: "",
-                component: "",
+                component: values.tabComponent,
                 properties:{}
             }
             editLeadObj.tabs.push(tab);
             setLeadObj(editLeadObj);
-            setNewTabName("");
-            setComponent(<Tab key={tab.title + index} {...tab} click={(value) => saveTabChanges(value)}/>)
+            editTab(tab, index)
+        }
+    }
+
+    const editTab = (tab, index) => {
+        switch(tab.component) {
+            case "DetailsView":
+                setComponent(<DetailsView key={tab.title + index} {...tab} click={(value) => saveTabChanges(value)}/>)
+                break;
+            case "ActivityView":
+                setComponent(<ActivityView key={tab.title + index} {...tab} click={(value) => saveTabChanges(value)}/>)
+                break;
+            case "NotesView":
+                setComponent(<NotesView key={tab.title + index} {...tab} click={(value) => saveTabChanges(value)}/>)
+                break;
+            default:
+                setComponent(null)
         }
     }
 
     const editCurrentTab = (tab, index)=> {
         if (!Component){
-            setComponent(<Tab key={tab.title + index} {...tab} click={(value) => saveTabChanges(value)}/>)
+            editTab(tab, index)
         }
     }
 
     const saveTabChanges = (value)=> {
         if (value){
-            delete value.onClick;
+            delete value.click;
+            const editLeadObj = JSON.parse(JSON.stringify(leadObj));
+            editLeadObj.tabs.map((tab, index) => {
+                if (tab.title === value.title){
+                    editLeadObj.tabs[index]= value;
+                }
+            })
+            setLeadObj(editLeadObj)
         }
-        console.log(value)
         setComponent(null);
     }
 
@@ -79,19 +98,7 @@ const LeadPage = () => {
         console.log(leadObj)
     }
 
-    const useStyles = makeStyles((theme: Theme) =>
-        createStyles({
-            formControl: {
-                margin: theme.spacing(0),
-                minWidth: 150,
-            }
-        }),
-    );
-
-    const classes = useStyles();
-
     return (
-
         <Container className={styles.page}>
             <Grid container spacing={2}>
                 <Grid item xs={3}>
@@ -111,22 +118,48 @@ const LeadPage = () => {
                     <Button variant="outlined" size="small" color="primary" onClick={saveChanges}> Save </Button>
                 </Grid>
             </Grid>
+
+            <Form
+                onSubmit={submit}
+                initialValues={null}
+                render={({ handleSubmit, form, submitting, pristine, values }) => (
+                    <form onSubmit={handleSubmit}>
+                        <Grid container spacing={3}>
+                            <Grid item xs={2}>
+                                <label>Title</label>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Field
+                                    name="title"
+                                    component="input"
+                                    type="text"
+                                    placeholder="Add Title"
+                                />
+                            </Grid>
+                        </Grid>
+                        <Grid container spacing={3}>
+                            <Grid item xs={2}>
+                                <label>Tab Component</label>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Field name="tabComponent" component="select">
+                                    <option />
+                                    <option value="DetailsView">DetailsView</option>
+                                    <option value="NotesView" >NotesView</option>
+                                    <option value="ActivityView" >ActivityView</option>
+                                </Field>
+                            </Grid>
+                        </Grid>
+                        <div className={styles.buttonGroup}>
+                            <Button variant="contained" color="primary" type="submit" disabled={submitting || pristine}>
+                                Submit
+                            </Button>
+                        </div>
+                    </form>
+                )}
+            />
             <Box>
                 <h2>Tabs</h2>
-                <FormControl className={classes.formControl}>
-                    <InputLabel id="new-tab-label">Add New Tab</InputLabel>
-                    <Select
-                        labelId="new-tab-label"
-                        id="new-tab"
-                        onChange={takeTabName}
-                    >
-                        <MenuItem value={"test"}>test</MenuItem>
-                        <MenuItem value={"other"} >other</MenuItem>
-                    </Select>
-                </FormControl>
-                <Button  variant="contained" color="primary" onClick={addNewTab}>
-                    Add
-                </Button>
                 <TableContainer component={Paper} className={styles.table}>
                     <Table  size="small" aria-label="a dense table">
                         <TableHead>
@@ -165,4 +198,4 @@ const LeadPage = () => {
     )
 }
 
-export default LeadPage;
+export default Page;

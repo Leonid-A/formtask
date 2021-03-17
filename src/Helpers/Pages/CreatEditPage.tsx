@@ -1,6 +1,6 @@
-import Classes from "../../jsoncode/classes";
+import DataClasses from "../../jsoncode/classes";
 import React, {useEffect, useState} from "react";
-import {Page} from "../../Types/TabsTypes";
+import {PageType} from "../../Types/TabsTypes";
 import styles from '../../Styles/CreatePage.module.css';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
@@ -21,10 +21,14 @@ import {
 
 const CreatEditPage = () => {
     const [pages, setPages]=useState([]);
-    const [renderClasses, setRenderClasses]=useState([])
+    const [classes, setClasses]=useState([])
     const [newPageName, setNewPageName]=useState("");
 
-    const getData=()=>{
+    useEffect(()=>{
+        getData();
+    },[])
+
+    const  getData= ()=>{
         fetch('data.json'
             ,{
                 headers : {
@@ -38,52 +42,67 @@ const CreatEditPage = () => {
             })
             .then(function(myJson) {
                 setPages(myJson)
+                generateClasses(myJson);
             });
     }
 
-    const setClasses=() => {
+    const generateClasses=(myJson) => {
         let classesArray=[];
-        Classes.map((obj) =>{
+        DataClasses.map((obj) =>{
             if (obj.isDocument && !obj.isSystem) {
-                pages.map((page)=>{
+                myJson.map((page)=>{
                     if (page.classId !== obj.name){
                         classesArray.push(obj.name)
                     }
                 })
             }
         })
-        setRenderClasses(classesArray)
+        setClasses(classesArray)
     }
-
-    useEffect(()=>{
-        getData()
-        setClasses()
-
-    },[])
-
 
     const takePageName = (event: React.ChangeEvent<{ value: unknown }>) => {
         setNewPageName(event.target.value as string) ;
     }
 
-/*    const addNewPage = () => {
+    const addNewPage = () => {
         if (newPageName){
             const pagesArray = JSON.parse(JSON.stringify(pages));
             pagesArray.push({classId:newPageName});
             setPages(pagesArray);
+            removeClass(newPageName)
             setNewPageName("");
         }
-    }*/
+    }
 
-/*    const deletePage = (id)=>{
+    const deletePage = (id)=>{
         const pagesArray = JSON.parse(JSON.stringify(pages));
         pagesArray.map((page,index)=>{
             if (page.classId === id){
                 pagesArray.splice(index,1);
+                addClass(page.classId)
             }
         })
         setPages(pagesArray);
-    }*/
+
+    }
+
+    const addClass = (name)=>{
+        const classesArray = JSON.parse(JSON.stringify(classes));
+        classesArray.push(name);
+        setClasses(classesArray);
+    }
+
+    const removeClass = (name) => {
+        classes.map((item, index)=>{
+            if (item === name){
+                classes.splice(index, 1)
+            }
+        })
+    }
+
+    const EditPage = (page) => {
+
+    }
 
     const useStyles = makeStyles((theme: Theme) =>
         createStyles({
@@ -94,24 +113,24 @@ const CreatEditPage = () => {
         }),
     );
 
-    const classes = useStyles();
+    const styleClasses = useStyles();
 
     return(
         <Container fixed>
             <h1>Pages</h1>
-            <FormControl className={classes.formControl}>
+            <FormControl className={styleClasses.formControl}>
                 <InputLabel id="create-page-label">Create Page</InputLabel>
                 <Select
                     labelId="create-page-label"
                     id="create-page"
                     onChange={takePageName}
                 >
-                    {renderClasses.map((name) =>{
-                            return <MenuItem key={name} value={name} >{name}</MenuItem>
+                    {classes.map((name) =>{
+                            return <MenuItem key={name} value={name}>{name}</MenuItem>
                     })}
                 </Select>
             </FormControl>
-            {/*<Button variant="contained" color="primary" onClick={addNewPage}>+</Button>
+            <Button variant="contained" color="primary" onClick={addNewPage}>+</Button>
             <TableContainer component={Paper} className={styles.table}>
                 <Table  size="small" aria-label="a dense table">
                     <TableHead>
@@ -122,7 +141,7 @@ const CreatEditPage = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {pages.map((page: Page)=> {
+                        {pages.map((page: PageType)=> {
                             return(
                                 <TableRow key={page.classId}>
                                     <TableCell align="center">
@@ -134,7 +153,7 @@ const CreatEditPage = () => {
                                         </Button>
                                     </TableCell>
                                     <TableCell align="center">
-                                        <Button variant="contained" color="primary" href={`/${page.classId}`}>
+                                        <Button variant="contained" color="primary" href={`/page/${page.classId}`} onClick={()=>EditPage(page)}>
                                             Edit
                                         </Button>
                                     </TableCell>
@@ -143,7 +162,7 @@ const CreatEditPage = () => {
                         })}
                     </TableBody>
                 </Table>
-            </TableContainer>*/}
+            </TableContainer>
         </Container>
     )
 }

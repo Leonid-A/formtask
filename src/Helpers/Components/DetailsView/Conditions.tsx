@@ -1,5 +1,5 @@
 import React from "react";
-import {Condition} from "../Types/TabsTypes";
+import {Condition} from "../../../Types/TabsTypes";
 
 const Conditions: React.FC<Condition>  = (props) => {
 

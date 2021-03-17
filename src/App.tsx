@@ -1,9 +1,9 @@
 import React from 'react';
 import './Styles/App.css';
 import { BrowserRouter, Route, Switch} from "react-router-dom";
-import CreatEditPage from "./Components/Pages/CreatEditPage"
-import LeadPage from "./Components/Pages/LeadPage"
-import QueryBuilderPage from "./Components/Pages/QueryBuilderPage";
+import CreatEditPage from "./Helpers/Pages/CreatEditPage"
+import Page from "./Helpers/Pages/Page"
+//import QueryBuilderPage from "./Components/Pages/QueryBuilderPage";
 
 
 function App() {
@@ -12,8 +12,8 @@ function App() {
           <div className="App">
               <Switch>
                   <Route exact path="/" component={CreatEditPage} />
-                  <Route path="/Lead" component={LeadPage} />
-                  <Route path="/builder" component={QueryBuilderPage} />
+                  <Route path="/page" component={Page} />
+                  {/*<Route path="/builder" component={QueryBuilderPage} />*/}
                   <Route path="*" render={() => <h1>page not found</h1>} />
               </Switch>
           </div>

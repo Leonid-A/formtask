@@ -1,4 +1,4 @@
-export type Page = {
+export type PageType = {
     classId: string;
     tabs: Props[];
     dialog?: object;

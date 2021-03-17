@@ -1,14 +1,13 @@
 import React from 'react';
-import {Props, Comp} from "../Types/TabsTypes";
+import {Props, Comp} from "../../../Types/TabsTypes";
 import {Field, Form} from "react-final-form";
 import { FieldArray } from 'react-final-form-arrays';
 import arrayMutators from 'final-form-arrays';
-import styles from '../Styles/Tab.module.css';
+import styles from '../../../Styles/Tab.module.css';
 import {Box, Card, Grid, Button, ButtonGroup} from '@material-ui/core';
-import Conditions from "./Conditions"
+import Conditions from "./Conditions";
 
-const Tab: React.FC<Props> = (props) => {
-
+const DetailsView: React.FC<Props> = (props) => {
     return(
        <Box className={styles.tab}>
             <h1>{props.title} Tab</h1>
@@ -29,7 +28,7 @@ const Tab: React.FC<Props> = (props) => {
                                 <Grid item xs={2}>
                                     <label >Path</label>
                                 </Grid>
-                                <Grid item xs={3}>
+                                <Grid item xs={5}>
                                     <Field
                                         name="path"
                                         component="input"
@@ -46,6 +45,7 @@ const Tab: React.FC<Props> = (props) => {
                                         name="title"
                                         component="input"
                                         type="text"
+                                        disabled={true}
                                     />
                                 </Grid>
                             </Grid>
@@ -66,12 +66,13 @@ const Tab: React.FC<Props> = (props) => {
                                     <label className={styles.label}>Component</label>
                                 </Grid>
                                 <Grid item xs={5}>
-                                    <Field name="component" component="select">
-                                        <option value=""> </option>
-                                        <option value="DetailsView">DetailsView</option>
-                                        <option value="NotesView">NotesView</option>
-                                        <option value="ActivityView">ActivityView</option>
-                                    </Field>
+                                    <Field
+
+                                        name="component"
+                                        component="input"
+                                        type="text"
+                                        disabled={true}
+                                    />
                                 </Grid>
                             </Grid>
                             <h3>Properties</h3>
@@ -209,11 +210,10 @@ const Tab: React.FC<Props> = (props) => {
                                                                     />
                                                                 </Grid>
                                                             </Grid>
-                                                            {/*{props.properties.sections[sectIndex].selectedFields[index].conditions
+                                                         {/*   {props.properties.sections[sectIndex].selectedFields[index].conditions
                                                                 ? <Conditions {...props.properties.sections[sectIndex].selectedFields[index].conditions}/>
-                                                                : null}
+                                                                : null}*/}
 
-                                                            */}
                                                         </Card>
                                                     ))
                                                 }
@@ -232,6 +232,7 @@ const Tab: React.FC<Props> = (props) => {
                                     </Button>
                                 </ButtonGroup>
                             </Grid>
+
                         </form>
                     </Card>
                 )}
@@ -240,4 +241,4 @@ const Tab: React.FC<Props> = (props) => {
     )
 }
 
-export default Tab;
+export default DetailsView;
