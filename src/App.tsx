@@ -12,7 +12,7 @@ function App() {
           <div className="App">
               <Switch>
                   <Route exact path="/" component={CreatEditPage} />
-                  <Route path="/page" component={Page} />
+                  <Route path="/page/:classId" component={Page} />
                   {/*<Route path="/builder" component={QueryBuilderPage} />*/}
                   <Route path="*" render={() => <h1>page not found</h1>} />
               </Switch>

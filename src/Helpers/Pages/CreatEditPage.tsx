@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import {PageType} from "../../Types/TabsTypes";
 import styles from '../../Styles/CreatePage.module.css';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import {Link} from "react-router-dom";
 import {
     Paper,
     TableRow,
@@ -20,7 +21,7 @@ import {
 } from '@material-ui/core';
 
 const CreatEditPage = () => {
-    const [pages, setPages]=useState([]);
+    const [pages, setPages]=useState<PageType[]>([]);
     const [classes, setClasses]=useState([])
     const [newPageName, setNewPageName]=useState("");
 
@@ -28,33 +29,40 @@ const CreatEditPage = () => {
         getData();
     },[])
 
-    const  getData= ()=>{
-        fetch('data.json'
-            ,{
-                headers : {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            }
-        )
-            .then(function(response){
+    const getData= ()=>{
+
+       fetch('https://form-update-ae431-default-rtdb.firebaseio.com/data.json',{
+           method:"GET",
+          headers: {"Content-Type": "application/json"}
+      })
+            .then(response => {
                 return response.json();
             })
-            .then(function(myJson) {
-                setPages(myJson)
-                generateClasses(myJson);
+            .then(responseData => {
+               let data:  PageType[];
+               for (const key in responseData) {
+                   data = responseData[key]
+               }
+               console.log(data)
+               setPages(data)
+               generateClasses(data);
             });
     }
 
-    const generateClasses=(myJson) => {
+    const generateClasses=(data) => {
+       let contains = false;
         let classesArray=[];
         DataClasses.map((obj) =>{
             if (obj.isDocument && !obj.isSystem) {
-                myJson.map((page)=>{
-                    if (page.classId !== obj.name){
-                        classesArray.push(obj.name)
+                data.map((page)=>{
+                    if (page.classId === obj.name){
+                        contains=true
                     }
                 })
+                if(!contains){
+                    classesArray.push(obj.name)
+                }
+            contains=false
             }
         })
         setClasses(classesArray)
@@ -67,10 +75,19 @@ const CreatEditPage = () => {
     const addNewPage = () => {
         if (newPageName){
             const pagesArray = JSON.parse(JSON.stringify(pages));
-            pagesArray.push({classId:newPageName});
-            setPages(pagesArray);
-            removeClass(newPageName)
-            setNewPageName("");
+            pagesArray.push({
+                classId:newPageName,
+                tabs: []
+            });
+            fetch("https://form-update-ae431-default-rtdb.firebaseio.com/data.json",{
+                method: "POST",
+                body: JSON.stringify(pagesArray),
+                headers: {"Content-Type": "application/json"}
+            }).then(response => {
+                setPages(pagesArray);
+                removeClass(newPageName)
+                setNewPageName("");
+            }).catch(err=> console.log(err))
         }
     }
 
@@ -83,7 +100,6 @@ const CreatEditPage = () => {
             }
         })
         setPages(pagesArray);
-
     }
 
     const addClass = (name)=>{
@@ -93,15 +109,13 @@ const CreatEditPage = () => {
     }
 
     const removeClass = (name) => {
-        classes.map((item, index)=>{
+        const classesArray = JSON.parse(JSON.stringify(classes));
+        classesArray.map((item, index)=>{
             if (item === name){
-                classes.splice(index, 1)
+                classesArray.splice(index, 1)
             }
         })
-    }
-
-    const EditPage = (page) => {
-
+        setClasses(classesArray)
     }
 
     const useStyles = makeStyles((theme: Theme) =>
@@ -141,7 +155,7 @@ const CreatEditPage = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {pages.map((page: PageType)=> {
+                        {pages && pages.map((page: PageType, index)=> {
                             return(
                                 <TableRow key={page.classId}>
                                     <TableCell align="center">
@@ -153,9 +167,14 @@ const CreatEditPage = () => {
                                         </Button>
                                     </TableCell>
                                     <TableCell align="center">
-                                        <Button variant="contained" color="primary" href={`/page/${page.classId}`} onClick={()=>EditPage(page)}>
+                                        <Link
+                                            to={{
+                                                pathname: `/page/${page.classId}`,
+                                                state: {pages, index}
+                                            }}
+                                        >
                                             Edit
-                                        </Button>
+                                        </Link>
                                     </TableCell>
                                 </TableRow>
                             )

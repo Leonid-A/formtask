@@ -44,6 +44,7 @@ const ActivityView: React.FC<Props>= (props) => {
                                         name="title"
                                         component="input"
                                         type="text"
+                                        disabled={true}
                                     />
                                 </Grid>
                             </Grid>
@@ -65,7 +66,6 @@ const ActivityView: React.FC<Props>= (props) => {
                                 </Grid>
                                 <Grid item xs={5}>
                                     <Field
-
                                         name="component"
                                         component="input"
                                         type="text"

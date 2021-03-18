@@ -1,5 +1,5 @@
 import Lead from "../../jsoncode/layout";
-import React, {useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {PageType, Props} from "../../Types/TabsTypes";
 import DetailsView from "../Components/DetailsView/DetailsView";
 import ActivityView from "../Components/ActivityView/ActivityView";
@@ -27,13 +27,19 @@ import {
 import arrayMutators from "final-form-arrays";
 import {Field, Form} from "react-final-form";
 
-const Page = () => {
-    const [leadObj, setLeadObj] = useState<PageType>(Lead);
+const Page = (props) => {
+    const [leadObj, setLeadObj] = useState<PageType>();
     const [Component, setComponent]=useState<JSX.Element>(null);
 
-    const setPathName = (event: React.ChangeEvent<HTMLInputElement>)=> {
+    useEffect(()=> {
+        const index= props.location.state.index
+        const page = props.location.state.pages[index]
+        setLeadObj(page)
+    }, [])
+
+   /* const setPathName = (event: React.ChangeEvent<HTMLInputElement>)=> {
         setLeadObj({...leadObj, classId: event.target.value})
-    }
+    }*/
 
     const deleteTab = (index)=>{
         const editLeadObj = JSON.parse(JSON.stringify(leadObj))
@@ -43,8 +49,8 @@ const Page = () => {
 
     const submit= (values)=>{
         if(values.title && values.tabComponent && !Component) {
-            const editLeadObj = JSON.parse(JSON.stringify(leadObj));
-            const index = leadObj.tabs.length
+            let editLeadObj = JSON.parse(JSON.stringify(leadObj));
+            let index = leadObj.tabs.length;
             const tab = {
                 title: values.title,
                 path: "",
@@ -80,9 +86,11 @@ const Page = () => {
         }
     }
 
-    const saveTabChanges = (value)=> {
+    const saveTabChanges =(value)=> {
+        console.log(leadObj)
         if (value){
             delete value.click;
+        //    console.log(leadObj)
             const editLeadObj = JSON.parse(JSON.stringify(leadObj));
             editLeadObj.tabs.map((tab, index) => {
                 if (tab.title === value.title){
@@ -102,6 +110,7 @@ const Page = () => {
         <Container className={styles.page}>
             <Grid container spacing={2}>
                 <Grid item xs={3}>
+
                     <TextField
                         id="classId"
                         label="Path"
@@ -110,8 +119,9 @@ const Page = () => {
                         InputLabelProps={{
                             shrink: true,
                         }}
-                        defaultValue={leadObj.classId}
-                        onChange={setPathName}
+                        value={leadObj && leadObj.classId}
+                       // onChange={setPathName}
+                        disabled={true}
                     />
                 </Grid>
                 <Grid item xs={3}>
@@ -170,7 +180,7 @@ const Page = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {leadObj.tabs.map((tab:Props, index:number)=> {
+                            {leadObj && leadObj.tabs && leadObj.tabs.map((tab:Props, index:number)=> {
                                 return(
                                     <TableRow key={tab.title}>
                                         <TableCell align="center">
