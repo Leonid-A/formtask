@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {Props} from "../../../Types/TabsTypes";
 import styles from "../../../Styles/Tab.module.css";
 import {Field, Form} from "react-final-form";

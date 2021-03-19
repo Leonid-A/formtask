@@ -8,6 +8,7 @@ import Page from "./Helpers/Pages/Page"
 
 function App() {
   return (
+
       <BrowserRouter>
           <div className="App">
               <Switch>

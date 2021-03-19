@@ -1,16 +1,12 @@
-import Lead from "../../jsoncode/layout";
 import React, {useCallback, useEffect, useState} from "react";
 import {PageType, Props} from "../../Types/TabsTypes";
 import DetailsView from "../Components/DetailsView/DetailsView";
 import ActivityView from "../Components/ActivityView/ActivityView";
 import NotesView from "../Components/NotesView/NotesView";
 import styles from '../../Styles/Page.module.css';
-import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {
     Grid,
     Container,
-    Select,
-    InputLabel,
     TextField,
     Box,
     TableContainer,
@@ -21,36 +17,67 @@ import {
     Table,
     Paper,
     Button,
-    MenuItem,
-    FormControl, ButtonGroup
 } from "@material-ui/core";
-import arrayMutators from "final-form-arrays";
 import {Field, Form} from "react-final-form";
+import FetchData from "../FetchData";
 
 const Page = (props) => {
+    const [pageIndex, setPageIndex] = useState<number>()
+    const [pages, setPages] = useState<PageType[]>()
     const [leadObj, setLeadObj] = useState<PageType>();
     const [Component, setComponent]=useState<JSX.Element>(null);
 
     useEffect(()=> {
-        const index= props.location.state.index
-        const page = props.location.state.pages[index]
-        setLeadObj(page)
+        let i;
+        let allPages;
+        if (props.location.state){
+            i = props.location.state.index;
+            allPages = props.location.state.pages;
+            setPageIndex(i);
+            setPages(allPages);
+            setLeadObj(allPages[i]);
+        } else {
+            (async ()=>{
+                await getData();
+            })()
+        }
     }, [])
 
-   /* const setPathName = (event: React.ChangeEvent<HTMLInputElement>)=> {
-        setLeadObj({...leadObj, classId: event.target.value})
-    }*/
-
-    const deleteTab = (index)=>{
-        const editLeadObj = JSON.parse(JSON.stringify(leadObj))
-        editLeadObj.tabs.splice(index,1);
-        setLeadObj(editLeadObj);
+    const getData = async() => {
+        let i;
+        let allPages;
+        try {
+            const res = await FetchData({type: "GET"})
+            const resData = await res.json()
+            for (const key in resData) {
+                allPages = resData[key]
+            }
+            const id = props.match.params.classId
+            i= allPages.findIndex(item => item.classId === id)
+            setLeadObj(allPages[i])
+        }catch (e){
+            console.info(e)
+        }
     }
 
-    const submit= (values)=>{
+    const deleteTab = async(index: number)=>{
+        const editLeadObj = JSON.parse(JSON.stringify(leadObj))
+        const allPages = JSON.parse(JSON.stringify(pages))
+        editLeadObj.tabs.splice(index,1);
+        allPages[pageIndex]= editLeadObj;
+        setPages(allPages);
+        try {
+            await FetchData({type: "POST", data: allPages});
+            setLeadObj(editLeadObj)
+        }catch ( e ){
+            console.info(e)
+        }
+    }
+
+    const submit = useCallback(async (values)=>{
         if(values.title && values.tabComponent && !Component) {
-            let editLeadObj = JSON.parse(JSON.stringify(leadObj));
-            let index = leadObj.tabs.length;
+            const obj = {...leadObj}
+            let index = obj.tabs.length;
             const tab = {
                 title: values.title,
                 path: "",
@@ -58,11 +85,18 @@ const Page = (props) => {
                 component: values.tabComponent,
                 properties:{}
             }
-            editLeadObj.tabs.push(tab);
-            setLeadObj(editLeadObj);
-            editTab(tab, index)
+            obj.tabs.push(tab);
+            pages[pageIndex] = obj
+            try {
+                await FetchData({type: "POST", data: pages})
+                setLeadObj(obj)
+                editTab(tab, index)
+
+            }catch ( e ){
+                console.info(e)
+            }
         }
-    }
+    },[leadObj,FetchData])
 
     const editTab = (tab, index) => {
         switch(tab.component) {
@@ -87,10 +121,8 @@ const Page = (props) => {
     }
 
     const saveTabChanges =(value)=> {
-        console.log(leadObj)
         if (value){
             delete value.click;
-        //    console.log(leadObj)
             const editLeadObj = JSON.parse(JSON.stringify(leadObj));
             editLeadObj.tabs.map((tab, index) => {
                 if (tab.title === value.title){
@@ -110,17 +142,13 @@ const Page = (props) => {
         <Container className={styles.page}>
             <Grid container spacing={2}>
                 <Grid item xs={3}>
-
                     <TextField
                         id="classId"
                         label="Path"
                         style={{ margin: 8 }}
                         margin="normal"
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
+                        InputLabelProps={{shrink: true}}
                         value={leadObj && leadObj.classId}
-                       // onChange={setPathName}
                         disabled={true}
                     />
                 </Grid>
@@ -128,7 +156,6 @@ const Page = (props) => {
                     <Button variant="outlined" size="small" color="primary" onClick={saveChanges}> Save </Button>
                 </Grid>
             </Grid>
-
             <Form
                 onSubmit={submit}
                 initialValues={null}

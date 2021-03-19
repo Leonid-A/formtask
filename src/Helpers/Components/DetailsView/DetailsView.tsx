@@ -1,11 +1,11 @@
 import React from 'react';
-import {Props, Comp} from "../../../Types/TabsTypes";
+import {Props} from "../../../Types/TabsTypes";
 import {Field, Form} from "react-final-form";
 import { FieldArray } from 'react-final-form-arrays';
 import arrayMutators from 'final-form-arrays';
 import styles from '../../../Styles/Tab.module.css';
 import {Box, Card, Grid, Button, ButtonGroup} from '@material-ui/core';
-import Conditions from "./Conditions";
+
 
 const DetailsView: React.FC<Props> = (props) => {
     return(
@@ -223,7 +223,11 @@ const DetailsView: React.FC<Props> = (props) => {
                                 }
                             </FieldArray>
                             <Grid container className={styles.btnGroup} >
-                                <ButtonGroup  variant="contained" color="primary" aria-label="contained primary button group">
+                                <ButtonGroup
+                                    variant="contained"
+                                    color="primary"
+                                    aria-label="contained primary button group"
+                                >
                                     <Button type="submit" disabled={submitting || pristine}>
                                         Submit
                                     </Button>
