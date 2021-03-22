@@ -1,6 +1,6 @@
 import React from "react";
-import {Props} from "../../../Types/TabsTypes";
-import styles from "../../../Styles/Tab.module.css";
+import {Props} from "../../../../Types/TabsTypes";
+import styles from "../../../../Styles/Tab.module.css";
 import {Field, Form} from "react-final-form";
 import arrayMutators from "final-form-arrays";
 import {Box, Button, ButtonGroup, Card, Grid} from "@material-ui/core";

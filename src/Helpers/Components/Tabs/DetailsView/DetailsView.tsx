@@ -1,11 +1,10 @@
 import React from 'react';
-import {Props} from "../../../Types/TabsTypes";
+import {Props} from "../../../../Types/TabsTypes";
 import {Field, Form} from "react-final-form";
 import { FieldArray } from 'react-final-form-arrays';
 import arrayMutators from 'final-form-arrays';
-import styles from '../../../Styles/Tab.module.css';
+import styles from '../../../../Styles/Tab.module.css';
 import {Box, Card, Grid, Button, ButtonGroup} from '@material-ui/core';
-
 
 const DetailsView: React.FC<Props> = (props) => {
     return(

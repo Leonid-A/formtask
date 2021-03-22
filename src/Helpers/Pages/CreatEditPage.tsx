@@ -1,5 +1,5 @@
 import DataClasses from "../../jsoncode/classes";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useContext} from "react";
 import {PageType} from "../../Types/TabsTypes";
 import styles from '../../Styles/CreatePage.module.css';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -19,37 +19,19 @@ import {
     InputLabel,
     Container
 } from '@material-ui/core';
-import FetchData from "../FetchData";
+import FetchData from "../FetchData/FetchData";
+import DataContext from "../context/dataContext"
 
 const CreatEditPage = () => {
-    const [pages, setPages]=useState<PageType[]>([]);
     const [classes, setClasses]=useState([])
     const [newPageName, setNewPageName]=useState("");
     const [loading, setLoading]=useState(true);
+    const {pages, updatePages}=useContext(DataContext);
 
     useEffect(()=>{
-        (async ()=>{
-            await getData();
+            generateClasses(pages)
             setLoading(false)
-        })()
-    },[])
-
-    const getData= async ()=>{
-        try {
-            const res = await FetchData({type: "GET"})
-            const resData = await res.json()
-            let data:  PageType[];
-            for (const key in resData) {
-                data = resData[key]
-            }
-            setPages(data)
-            generateClasses(data);
-
-        }catch (e){
-            console.info(e)
-        }
-
-    }
+    },[pages])
 
     const generateClasses=(data: PageType[]) => {
         let contains = false;
@@ -74,38 +56,37 @@ const CreatEditPage = () => {
         setNewPageName(event.target.value as string) ;
     }
 
-    const addNewPage = async () => {
+    const addNewPage = () => {
         if (newPageName){
             const pagesArray = JSON.parse(JSON.stringify(pages));
             pagesArray.push({
                 classId:newPageName,
                 tabs: []
             });
-            try {
-                await FetchData({type: "POST", data: pagesArray});
-                setPages(pagesArray);
-                removeClass(newPageName)
-                setNewPageName("");
-            }catch ( e ){
-                console.info(e)
-            }
+            setData(pagesArray);
+            removeClass(newPageName)
+            setNewPageName("");
         }
     }
 
-    const deletePage = async (name: string)=>{
-        const pagesArray = JSON.parse(JSON.stringify(pages));
-        pagesArray.map((page,index)=>{
+    const setData=async (newData)=> {
+        try {
+            await FetchData({type: "POST", data: newData});
+            updatePages(newData);
+        }catch ( e ){
+            console.info(e)
+        }
+    }
+
+    const deletePage =(name: string)=>{
+        const pagesArray = [...pages];
+        pagesArray && pagesArray.map((page,index)=>{
             if (page.classId === name){
                 pagesArray.splice(index,1);
             }
         })
-        try {
-            await FetchData({type: "POST", data: pagesArray});
-            setPages(pagesArray);
-            addClass(name);
-        }catch ( e ){
-            console.info(e)
-        }
+        setData(pagesArray)
+        addClass(name);
     }
 
     const addClass = (name: string)=>{
@@ -161,7 +142,8 @@ const CreatEditPage = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {!loading?  pages.map((page: PageType, index)=> {
+                        {!loading
+                            ?  pages.map((page: PageType, index)=> {
                             return(
                                 <TableRow key={page.classId}>
                                     <TableCell align="center">
@@ -184,8 +166,8 @@ const CreatEditPage = () => {
                                     </TableCell>
                                 </TableRow>
                             )
-                        }):<TableRow><TableCell><p>Loading...</p></TableCell></TableRow>}
-
+                        })
+                            :<TableRow><TableCell><p>Loading...</p></TableCell></TableRow>}
                     </TableBody>
                 </Table>
             </TableContainer>
